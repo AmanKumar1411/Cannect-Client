@@ -1,0 +1,23 @@
+{
+  "responses": {
+    "hii": "hello",
+    "hello": "Hi! How's your day going?",
+    "how are you": "I'm fine, thanks for asking!",
+    "what's up": "Not much, just chatting with you!",
+    "bye": "Goodbye! See you later!",
+    "good morning": "Good morning! Hope you have a great day!",
+    "good night": "Good night! Sleep tight!",
+    "thank you": "You're welcome!",
+    "what are you doing": "Just chatting and helping out!",
+    "where are you from": "I’m from the virtual world!",
+    "what's your name": "I'm your friendly chat assistant!",
+    "do you like music": "I love all kinds of music! What about you?",
+    "how's the weather": "I don't feel the weather, but I hope it's nice where you are!",
+    "i'm bored": "Let's play a game or chat! What would you like to do?",
+    "tell me a joke": "Why don't skeletons fight each other? Because they don't have the guts!",
+    "do you like sports": "I enjoy virtual sports! How about you?",
+    "what's your favorite color": "I like all colors, but green is pretty cool!",
+    "how old are you": "I was created recently, so I’m always young at heart!",
+    "are you real": "I'm as real as a virtual assistant can be!"
+  }
+}
