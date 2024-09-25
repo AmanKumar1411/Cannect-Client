@@ -1,4 +1,5 @@
 import ProfileInfo from "./components/profile-info";
+import Directmsg from "./components/newDM/Directmsg";
 
 const ContactContainer = () => {
   return (
@@ -10,6 +11,7 @@ const ContactContainer = () => {
         <div className="my-5">
           <div className="flex items-center justify-center pr-10">
             <Title text="Direct Messages" />
+            <Directmsg/>
           </div>
         </div>
         <div className="my-5">

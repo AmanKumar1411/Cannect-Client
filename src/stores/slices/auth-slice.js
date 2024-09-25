@@ -1,7 +1,4 @@
-// export const createAuthSlice = (set) => ({
-//   userInfo:{email:"",id:""},
-//   setUserInfo: (userInfo) => set({ ...userInfo}),
-// });
+
 
 export const createAuthSlice = (set) => ({
   userInfo: { email: "", id: "" }, 

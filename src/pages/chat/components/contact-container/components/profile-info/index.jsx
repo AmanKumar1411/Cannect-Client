@@ -2,17 +2,35 @@ import React from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useAppStore } from "@/stores";
 import { getColor } from "@/lib/utils";
-import { HOST } from "@/utils/containts";
+import { HOST, LOGOUT_USER_ROUTE } from "@/utils/containts";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { FaEdit } from "react-icons/fa";
+import { FiEdit2 } from "react-icons/fi";
+import { IoLogOut } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
+import apiClient from "@/lib/api-client";
 const ProfileInfo = () => {
-  const { userInfo } = useAppStore();
-
+  const navigate = useNavigate();
+  const { userInfo, setUserInfo } = useAppStore();
+  const logout = async () => {
+    try {
+      const response = await apiClient(
+        LOGOUT_USER_ROUTE,
+        {},
+        { withCrendentials: true }
+      );
+      if (response.status === 200) {
+        navigate("/auth");
+        setUserInfo(null);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="absolute bottom-0 h-16 flex items-center justify-between p-10 w-full bg-[#2a2b33]">
       <div className="flex gap-3 items-center justify-center">
@@ -47,10 +65,28 @@ const ProfileInfo = () => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
-              <FaEdit className="text-purple-500 text-xl font-medium" />
+              <FiEdit2
+                className="text-blue-600 text-xl font-medium"
+                onClick={() => {
+                  navigate("/profile");
+                }}
+              />
             </TooltipTrigger>
             <TooltipContent>
-              <p>Add to library</p>
+              <p>Edit Profile</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <IoLogOut
+                className="text-red-600 text-xl font-medium"
+                onClick={logout}
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Logout</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
