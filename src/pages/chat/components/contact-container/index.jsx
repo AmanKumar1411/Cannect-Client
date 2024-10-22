@@ -56,7 +56,7 @@ export const Logo = () => {
         ></path>{" "}
       </svg>
       <span className="text-3xl playpen-sans-medium text-green-400 ">
-        Cannect
+        Konnect
       </span>
     </div>
   );

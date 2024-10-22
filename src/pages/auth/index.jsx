@@ -18,6 +18,7 @@ const Auth = () => {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [signupConfirmPassword, setSignupConfirmPassword] = useState("");
+
   const validateSignup = () => {
     if (!signupEmail.length) {
       toast.error("Email is required");
@@ -28,11 +29,12 @@ const Auth = () => {
       return false;
     }
     if (signupPassword !== signupConfirmPassword) {
-      toast.error("ConfirmPassword is not same as Password");
+      toast.error("ConfirmPassword is not the same as Password");
       return false;
     }
     return true;
   };
+
   const validatelogIn = () => {
     if (!loginEmail.length) {
       toast.error("Email is required");
@@ -42,43 +44,50 @@ const Auth = () => {
       toast.error("Password is required");
       return false;
     }
-
     return true;
   };
 
   const handleLogin = async () => {
     if (validatelogIn()) {
-      const response = await apiClient.post(
-        LOGIN_ROUTE,
-        {
-          email: loginEmail,
-          password: loginPassword,
-        },
-        { withCredentials: true }
-      );
-      setUserInfo(response.data.user);
-      if (response.data.user.profileSetup) {
-        navigate("/chat");
+      try {
+        const response = await apiClient.post(
+          LOGIN_ROUTE,
+          {
+            email: loginEmail,
+            password: loginPassword,
+          },
+          { withCredentials: true }
+        );
+        setUserInfo(response.data.user);
+        if (response.data.user.profileSetup) {
+          navigate("/chat");
+        }
+        // else {
+        // navigate("/profile");
+        // }
+      } catch (error) {
+        toast.error("Login failed. Please try again.");
       }
-      //  else {
-      //   navigate("/profile");
-      // }
     }
   };
+
   const handleSignup = async () => {
     if (validateSignup()) {
-      const response = await apiClient.post(
-        SIGNUP_ROUTE,
-        {
-          email: signupEmail,
-          password: signupPassword,
-        },
-        { withCredentials: true }
-      );
-
-      if (response.status === 201) {
-        setUserInfo(response.data.user);
-        navigate("/profile");
+      try {
+        const response = await apiClient.post(
+          SIGNUP_ROUTE,
+          {
+            email: signupEmail,
+            password: signupPassword,
+          },
+          { withCredentials: true }
+        );
+        if (response.status === 201) {
+          setUserInfo(response.data.user);
+          navigate("/profile");
+        }
+      } catch (error) {
+        toast.error("Signup failed. Please try again.");
       }
     }
   };

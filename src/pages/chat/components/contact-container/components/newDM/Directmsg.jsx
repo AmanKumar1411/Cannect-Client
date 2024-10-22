@@ -16,39 +16,67 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import Lottie from "react-lottie";
 import { IoPersonAddSharp } from "react-icons/io5";
 import { Input } from "@/components/ui/input";
-import { animationDefaultOptions } from "@/lib/utils";
-import apiClient from "@/lib/api-client";
-import { SEARCH_CONTACT_ROUTE } from "@/utils/containts";
 import { Avatar } from "@/components/ui/avatar";
 import { useAppStore } from "@/stores";
+
+const dummyUsers = [
+  { id: 1, firstName: "John", lastName: "Doe", email: "john@example.com" },
+  { id: 2, firstName: "Jane", lastName: "Smith", email: "jane@example.com" },
+  {
+    id: 3,
+    firstName: "Alice",
+    lastName: "Williams",
+    email: "alice@example.com",
+  },
+];
+
+const responses = {
+  hii: "hello",
+  hello: "Hi! How's your day going?",
+  "how are you": "I'm fine, thanks for asking!",
+  "what's up": "Not much, just chatting with you!",
+  bye: "Goodbye! See you later!",
+  hii: "hello",
+  hello: "Hi! How's your day going?",
+  "how are you": "I'm fine, thanks for asking!",
+  "what's up": "Not much, just chatting with you!",
+  bye: "Goodbye! See you later!",
+  "good morning": "Good morning! Hope you have a great day!",
+  "good night": "Good night! Sleep tight!",
+  "thank you": "You're welcome!",
+  "what are you doing": "Just chatting and helping out!",
+  "where are you from": "I’m from the virtual world!",
+  "what's your name": "I'm your friendly chat assistant!",
+  "do you like music": "I love all kinds of music! What about you?",
+  "how's the weather":
+    "I don't feel the weather, but I hope it's nice where you are!",
+  "i'm bored": "Let's play a game or chat! What would you like to do?",
+  "tell me a joke":
+    "Why don't skeletons fight each other? Because they don't have the guts!",
+  "do you like sports": "I enjoy virtual sports! How about you?",
+  "what's your favorite color": "I like all colors, but green is pretty cool!",
+  "how old are you": "I was created recently, so I’m always young at heart!",
+  "are you real": "I'm as real as a virtual assistant can be!",
+};
+
 const Directmsg = () => {
   const { setselectedChatType, setselectedChatData } = useAppStore();
   const [openNewContact, setopenNewContact] = useState(false);
-  const [SearchContacts, setSearchContacts] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
 
-  const searchContacts = async (searchTerm) => {
-    try {
-      if (searchTerm.length > 0) {
-        const response = await apiClient.post(
-          SEARCH_CONTACT_ROUTE,
-          { searchTerm },
-          { withCredentials: true }
-        );
-        if (response.status === 200 && response.data.contacts) {
-          setSearchContacts(response.data.contacts);
-        }
-      } else {
-        setSearchContacts([]);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  const searchNewContacts = (contact) => {
-    setopenNewContact(false);
-    setselectedChatData(contact);
-    setselectedChatType("contact");
-    setSearchContacts([]);
+  const handleSendMessage = () => {
+    const newMessages = [...messages, { text: input, sender: "user" }];
+    setMessages(newMessages);
+
+    const botReply =
+      responses[input.toLowerCase()] || "Sorry, I don't understand that!";
+    setTimeout(() => {
+      setMessages([...newMessages, { text: botReply, sender: "bot" }]);
+    }, 1000);
+
+    setInput("");
   };
 
   return (
@@ -68,84 +96,81 @@ const Directmsg = () => {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
+
       <Dialog open={openNewContact} onOpenChange={setopenNewContact}>
         <DialogContent className="bg-[#181920] border-none text-white w-[400px] h-[400px] flex flex-col">
           <DialogHeader>
             <DialogTitle>Please Select a Contact</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
-          <div>
-            <Input
-              placeholder="Search contact"
-              className=" rounded-lg p-3 bg-[#2c2e3b] border-none"
-              onChange={(e) => searchContacts(e.target.value)}
-            />
-          </div>
           <ScrollArea className="h-[250px]">
             <div>
-              {SearchContacts.map((contact) => (
+              {dummyUsers.map((user) => (
                 <div
-                  key={contact.id} // Ensure this is unique for each contact
+                  key={user.id}
                   className="flex gap-3 items-center cursor-pointer"
-                  onClick={() => searchNewContacts(contact)}
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setMessages([]);
+                    setopenNewContact(false);
+                  }}
                 >
                   <div>
                     <Avatar className="h-12 w-12 rounded-full overflow-hidden">
-                      {contact.image ? (
-                        <AvatarImage
-                          src={`${HOST}/${contact.image}`}
-                          alt="profile-pic"
-                          className="object-cover w-full h-full bg-black"
-                        />
-                      ) : (
-                        <div
-                          className={`uppercase h-12 w-12 text-lg border-[5px] flex items-center justify-center rounded-full text-white`}
-                        >
-                          {contact.firstName
-                            ? contact.firstName.charAt(0)
-                            : contact.email.charAt(0)}
-                        </div>
-                      )}
+                      <div className="uppercase h-12 w-12 text-lg border-[5px] flex items-center justify-center rounded-full text-white">
+                        {user.firstName.charAt(0)}
+                      </div>
                     </Avatar>
                   </div>
                   <div className="flex flex-col ">
-                    <span>
-                      {" "}
-                      {contact.firstName && contact.lastName
-                        ? `${contact.firstName} ${contact.lastName}`
-                        : contact.email}
-                    </span>
-                    <span className="text-sm">{contact.email}</span>
+                    <span>{`${user.firstName} ${user.lastName}`}</span>
+                    <span className="text-sm">{user.email}</span>
                   </div>
                 </div>
               ))}
             </div>
           </ScrollArea>
-          {SearchContacts.length === 0 && (
-            <div className="flex-1 md:bg-[#032221] md:flex-col justify-center items-center flex transition-all duration-1000">
-              {animationDefaultOptions.animationData ? (
-                <Lottie
-                  isClickToPauseDisabled={true}
-                  height={100}
-                  width={100}
-                  options={animationDefaultOptions}
-                />
-              ) : (
-                <p>No animation data found</p>
-              )}
-              <div className="text-opacity-80 text-white flex-col gap-10 items-center mt-10 lg:text-2xl text-3xl transition-all duration-300 text-center">
-                <h1 className="sofadi-one-regular">
-                  Find<span className="text-green-600">!</span>
-                </h1>
-                <h3>Your Friends</h3>
-                <span className="text-green-600 playpen-sans-medium">
-                  Cannect
-                </span>
-              </div>
-            </div>
-          )}
         </DialogContent>
       </Dialog>
+
+      {selectedUser && (
+        <div className="fixed bottom-0 right-0 w-[400px] bg-[#181920] text-white p-4">
+          <div className="flex items-center justify-between">
+            <h3>
+              {selectedUser.firstName} {selectedUser.lastName}
+            </h3>
+            <button onClick={() => setSelectedUser(null)}>Close</button>
+          </div>
+          <ScrollArea className="h-[250px] mt-4">
+            <div className="flex flex-col gap-2">
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`${
+                    message.sender === "user" ? "self-end" : "self-start"
+                  } p-2 bg-[#2c2e3b] rounded-lg`}
+                >
+                  {message.text}
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
+          <div className="flex mt-4">
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type a message..."
+              className="flex-1"
+            />
+            <button
+              onClick={handleSendMessage}
+              className="ml-2 px-4 py-2 bg-green-600 text-white rounded-lg"
+            >
+              Send
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 };
